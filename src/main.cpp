@@ -136,10 +136,13 @@ String fetchTextFromServer() {
       http.end();
       return payload;
     } else {
+      String ErrorMessage = "Error: HTTP GET Failed, Response/Error Code: " + String(httpResponseCode);
       http.end();
-      return "Error: HTTP GET Failed";
+      return ErrorMessage;
     }
   } else {
-    return "Error: WiFi Not Connected";
+    String WifiError = "Error: WiFi Disconnected/Not Connected";
+    Serial.println(WifiError); // should give new improved debug info
+    return WifiError;
   }
 }
