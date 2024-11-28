@@ -5,18 +5,24 @@
 
 // WiFi credentials for AAU-1-DAY
 const char* ssid = "AAU-1-DAY"; // Guest WiFi SSID
-const char* password = "guru46watch"; // Guest WiFi password
+// Guest WiFi passwords in array format
+const char* password[] = {
+    "brown76first", // Today's password
+    "sync26smash" // Tomorrow's password
+    "still12oven" // Day after tomorrow's password
+    "wash53leaf" // Day after day after tomorrow's password
+}; 
 
 // I2C addresses for LCD and RGB backlight
 #define LCD_ADDRESS 0x3E
 #define RGB_ADDRESS 0x62
 
 // Server URL
-const char* serverUrl = "https://happens-flights-foundations-allergy.trycloudflare.com/get/testing/esp32";
+const char* serverUrl = "https://finances-prospect-sin-developed.trycloudflare.com/get/testing/esp32";
 
 // Function prototypes
 void connectToWiFi();
-void sendCommand(byte address, byte command);
+void sendCommand(byte address, byte command   );
 void sendData(byte address, byte data);
 void lcdInit();
 void setRGB(byte r, byte g, byte b);
@@ -48,17 +54,34 @@ void loop() {
 
 // Function to connect to WiFi with WPA2-Personal
 void connectToWiFi() {
-  WiFi.disconnect(true); // Disconnect any previous connections
-  WiFi.mode(WIFI_STA);   // Set ESP32 to Station mode
-  WiFi.begin(ssid, password); // Start WiFi connection with SSID and password
+    WiFi.disconnect(true); // Disconnect any previous connections
+    WiFi.mode(WIFI_STA);   // Set ESP32 to Station mode
+    bool connected = false; // Flag to indicate successful connection
 
-  Serial.println("Connecting to WiFi...");
-  while (WiFi.status() != WL_CONNECTED) { // Wait for connection
-    delay(1000);
-    Serial.print(".");
-  }
-  Serial.println("\nConnected to WiFi!");
+    for (int i = 0; i < sizeof(password) / sizeof(password[0]); i++) {
+        Serial.printf("Attempting to connect with password %d: %s\n", i + 1, password[i]);
+        WiFi.begin(ssid, password[i]); // Try connecting with the current password
+        int retries = 0; // Track connection attempts
+        while (WiFi.status() != WL_CONNECTED && retries < 10) { // Retry for a maximum of 10 seconds
+            delay(1000);
+            Serial.print(".");
+            retries++;
+        }
+        if (WiFi.status() == WL_CONNECTED) { // Check if connected
+            Serial.printf("\nSuccessfully connected to WiFi with password %d: %s\n", i + 1, password[i]);
+            connected = true;
+            break; // Exit loop after successful connection
+        } else {
+            Serial.printf("\nFailed to connect with password %d: %s\n", i + 1, password[i]);
+        }
+        WiFi.disconnect(true); // Disconnect and try the next password
+    }
+
+    if (!connected) {
+        Serial.println("\nFailed to connect to WiFi with any provided password.");
+    }
 }
+
 
 // Send a command to the LCD via I2C
 void sendCommand(byte address, byte command) {
