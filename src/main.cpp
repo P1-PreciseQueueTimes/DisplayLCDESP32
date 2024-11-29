@@ -8,8 +8,8 @@ const char* ssid = "AAU-1-DAY"; // Guest WiFi SSID
 // Guest WiFi passwords in array format
 const char* password[] = {
     "brown76first", // Today's password
-    "sync26smash" // Tomorrow's password
-    "still12oven" // Day after tomorrow's password
+    "sync26smash", // Tomorrow's password
+    "still12oven", // Day after tomorrow's password
     "wash53leaf" // Day after day after tomorrow's password
 }; 
 
