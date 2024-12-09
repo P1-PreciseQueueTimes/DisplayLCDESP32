@@ -12,7 +12,7 @@
  * @details about the Program and how it works;
  * The program follows these steps when running:
  * 1. It initializes serial communication for debugging purposes.
- * 2. It it initializes the I2C communication with the LCD and RGB backlight.
+ * 2. It initializes the I2C communication with the LCD and RGB backlight.
  * 3. It tries to Connect to AAU-1-DAY wifi network with all possible passwords seen since last update to code.
  * 4. If it successfully connects to the WiFi, it initializes the LCD and RGB backlight.
  * 5. Again if it successfully connects to the WiFi, it fetches text from the server and displays it on the LCD.
@@ -49,7 +49,7 @@ const char* password[] = {
 // Server URL
 const char* serverUrl = "https://completing-understood-cannon-senegal.trycloudflare.com/get/testing/esp32";
 
-// Function prototypes
+// Function prototypes/declarations tells compiler about the function allowing the function to be called before it's defined.
 void connectToWiFi();
 void sendCommand(byte address, byte command   );
 void sendData(byte address, byte data);
@@ -93,7 +93,7 @@ void connectToWiFi() {
         Serial.printf("Attempting to connect with password %d: %s\n", i + 1, password[i]);
         WiFi.begin(ssid, password[i]); // Try connecting with the current password
         int retries = 0; // Track connection attempts
-        while (WiFi.status() != WL_CONNECTED && retries < 20) { // Retry for a maximum of 10 seconds
+        while (WiFi.status() != WL_CONNECTED && retries < 20) { // Retry for a maximum of 20 seconds
             delay(5000);
             Serial.print(".");
             retries++;
