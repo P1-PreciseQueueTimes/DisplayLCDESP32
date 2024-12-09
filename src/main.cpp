@@ -199,7 +199,17 @@ void lcdPrint(const char* message) {
 
 /**
  * @brief Fetch text from the server.
+ * 
+ * This function attempts to fetch text data from a server using an HTTP GET request.
+ * It first checks if the device is connected to WiFi. If connected, it sends an HTTP GET request
+ * to the server and retrieves the response payload. If the request fails or if the device is not
+ * connected to WiFi, it returns an appropriate error message.
+ * 
  * @return String containing the server response or an error message.
+ * 
+ * @note The `payload` variable contains the text data returned by the server in response to the HTTP GET request.
+ * The `httpResponseCode` is an integer because it represents the HTTP status code, which is a numeric value.
+ * The `payload` is a String because it represents the actual content of the server's response, which is text.
  */
 String fetchTextFromServer() {
   if (WiFi.status() == WL_CONNECTED) {
