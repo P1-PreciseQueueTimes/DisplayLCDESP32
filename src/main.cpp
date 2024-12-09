@@ -3,14 +3,43 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
+/**
+ * @brief ESP32 LCD Display with RGB Backlight.
+ * @note 
+ * This program is connecting our ESP32 to a Wifi network, it then initializes a LCD with RGB Backlight,
+ * goes to our server and fetches text to display on the LCD every 30 seconds.
+ * 
+ * @details about the Program and how it works;
+ * The program follows these steps when running:
+ * 1. It initializes serial communication for debugging purposes.
+ * 2. It it initializes the I2C communication with the LCD and RGB backlight.
+ * 3. It tries to Connect to AAU-1-DAY wifi network with all possible passwords seen since last update to code.
+ * 4. If it successfully connects to the WiFi, it initializes the LCD and RGB backlight.
+ * 5. Again if it successfully connects to the WiFi, it fetches text from the server and displays it on the LCD.
+ * 6. It then proceeds to fetch or ask for a new text string every 30 seconds, if a new one is provided it updates every 30 seconds.
+ * 
+ * @note This note Shows the logic/functions of the program:
+ * The program includes the following functions/logic:
+ * - setup(): Initializes the system and performs the initial setup.
+ * - loop(): Continuously fetches and updates the text on the LCD.
+ * - connectToWiFi(): Connects to the WiFi network using multiple passwords.
+ * - sendCommand(): Sends a command to the LCD via I2C.
+ * - sendData(): Sends data to the LCD via I2C.
+ * - lcdInit(): Initializes the LCD.
+ * - setRGB(): Sets the RGB backlight color.
+ * - lcdPrint(): Displays a message on the LCD.
+ * - fetchTextFromServer(): Fetches text from the server. 
+ */
+
+
 // WiFi credentials for AAU-1-DAY
 const char* ssid = "AAU-1-DAY"; // Guest WiFi SSID
 // Guest WiFi passwords in array format
 const char* password[] = {
-    "brown76first", // Today's password
-    "sync26smash", // Tomorrow's password
-    "still12oven", // Day after tomorrow's password
-    "wash53leaf" // Day after day after tomorrow's password
+    "vain93force", // Today's password
+    "loss73side", // Tomorrow's password
+    "hope77send", // Day after tomorrow's password
+    "dads15gray" // 4th day's password
 }; 
 
 // I2C addresses for LCD and RGB backlight
@@ -18,7 +47,7 @@ const char* password[] = {
 #define RGB_ADDRESS 0x62
 
 // Server URL
-const char* serverUrl = "https://finances-prospect-sin-developed.trycloudflare.com/get/testing/esp32";
+const char* serverUrl = "https://completing-understood-cannon-senegal.trycloudflare.com/get/testing/esp32";
 
 // Function prototypes
 void connectToWiFi();
@@ -38,7 +67,7 @@ void setup() {
 
   // Initialize the LCD and RGB
   lcdInit();
-  setRGB(255, 255, 128); // Set backlight color to blue
+  setRGB(255, 255, 128); // Set backlight color to lukewarm yellow
 
   // Fetch text from the server and display it on the LCD
   String message = fetchTextFromServer();
@@ -52,7 +81,9 @@ void loop() {
   lcdPrint(message.c_str());
 }
 
-// Function to connect to WiFi with WPA2-Personal
+/**
+ * @brief Connect to the WiFi network using multiple passwords. (WPA2-Personal)
+ */
 void connectToWiFi() {
     WiFi.disconnect(true); // Disconnect any previous connections
     WiFi.mode(WIFI_STA);   // Set ESP32 to Station mode
@@ -62,8 +93,8 @@ void connectToWiFi() {
         Serial.printf("Attempting to connect with password %d: %s\n", i + 1, password[i]);
         WiFi.begin(ssid, password[i]); // Try connecting with the current password
         int retries = 0; // Track connection attempts
-        while (WiFi.status() != WL_CONNECTED && retries < 10) { // Retry for a maximum of 10 seconds
-            delay(1000);
+        while (WiFi.status() != WL_CONNECTED && retries < 20) { // Retry for a maximum of 10 seconds
+            delay(5000);
             Serial.print(".");
             retries++;
         }
@@ -83,7 +114,11 @@ void connectToWiFi() {
 }
 
 
-// Send a command to the LCD via I2C
+/**
+ * @brief Send a command to the LCD via I2C.
+ * @param address I2C address of the device.
+ * @param command Command byte to send.
+ */
 void sendCommand(byte address, byte command) {
   Wire.beginTransmission(address);
   Wire.write(0x80); // Command mode
@@ -91,7 +126,11 @@ void sendCommand(byte address, byte command) {
   Wire.endTransmission();
 }
 
-// Send data to the LCD via I2C
+/**
+ * @brief Send data to the LCD via I2C.
+ * @param address I2C address of the device.
+ * @param data Data byte to send.
+ */
 void sendData(byte address, byte data) {
   Wire.beginTransmission(address);
   Wire.write(0x40); // Data mode
@@ -99,7 +138,9 @@ void sendData(byte address, byte data) {
   Wire.endTransmission();
 }
 
-// Initialize the LCD
+/**
+ * @brief Initialize the LCD.
+ */
 void lcdInit() {
   sendCommand(LCD_ADDRESS, 0x38); // Function set: 2-line mode
   delay(5);
@@ -116,7 +157,12 @@ void lcdInit() {
   delay(5);
 }
 
-// Set RGB backlight color
+/**
+ * @brief Set the RGB backlight color.
+ * @param r Red intensity (0-255).
+ * @param g Green intensity (0-255).
+ * @param b Blue intensity (0-255).
+ */
 void setRGB(byte r, byte g, byte b) {
   Wire.beginTransmission(RGB_ADDRESS);
   Wire.write(0x00); Wire.write(0x00); // Set MODE1 register
@@ -138,7 +184,10 @@ void setRGB(byte r, byte g, byte b) {
   Wire.endTransmission();
 }
 
-// Display a message on the LCD
+/**
+ * @brief Display a message on the LCD.
+ * @param message Null-terminated string to display.
+ */
 void lcdPrint(const char* message) {
   sendCommand(LCD_ADDRESS, 0x01); // Clear display
   delay(2);
@@ -148,7 +197,10 @@ void lcdPrint(const char* message) {
   }
 }
 
-// Fetch text from the server
+/**
+ * @brief Fetch text from the server.
+ * @return String containing the server response or an error message.
+ */
 String fetchTextFromServer() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
