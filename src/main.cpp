@@ -195,11 +195,37 @@ void setRGB(byte r, byte g, byte b) {
 void lcdPrint(const char* message) {
   sendCommand(LCD_ADDRESS, 0x01); // Clear display
   delay(2);
-  sendCommand(LCD_ADDRESS, 0x80); // Set cursor to the beginning of the first line
-  while (*message) {
-    sendData(LCD_ADDRESS, *message++);
+
+  
+  const char* line1 = message;                   
+  const char* line2 = strchr(message, '\n');     
+  
+  if (line2) {
+    size_t line1Length = line2 - message;
+    char firstLine[17] = {0};
+    strncpy(firstLine, line1, line1Length > 16 ? 16 : line1Length); 
+    
+    line2++; 
+    char secondLine[17] = {0};
+    strncpy(secondLine, line2, 16); 
+
+    sendCommand(LCD_ADDRESS, 0x80); 
+    for (int i = 0; i < strlen(firstLine); i++) {
+      sendData(LCD_ADDRESS, firstLine[i]);
+    }
+
+    sendCommand(LCD_ADDRESS, 0xC0); 
+    for (int i = 0; i < strlen(secondLine); i++) {
+      sendData(LCD_ADDRESS, secondLine[i]);
+    }
+  } else {
+    sendCommand(LCD_ADDRESS, 0x80); 
+    for (int i = 0; i < strlen(message) && i < 16; i++) {
+      sendData(LCD_ADDRESS, message[i]);
+    }
   }
 }
+
 
 /**
  * @brief Fetch text from the server.
