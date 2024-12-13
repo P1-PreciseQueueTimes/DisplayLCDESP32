@@ -40,10 +40,10 @@
 const char* ssid = "AAU-1-DAY"; // Guest WiFi SSID
 // Guest WiFi passwords in array format
 const char* password[] = {
-    "vain93force", // Today's password
+    "wound54sound", // Today's password
     "loss73side", // Tomorrow's password
     "hope77send", // Day after tomorrow's password
-    "dads15gray" // 4th day's password
+    "quiet34coal" // 4th day's password
 }; 
 
 // I2C addresses for LCD and RGB backlight
@@ -51,7 +51,7 @@ const char* password[] = {
 #define RGB_ADDRESS 0x62
 
 // Server URL
-const char* serverUrl = "https://completing-understood-cannon-senegal.trycloudflare.com/get/testing/esp32";
+const char* serverUrl = "https://airports-shopping-squad-newton.trycloudflare.com/get/testing/esp32";
 
 // Function prototypes/declarations tells compiler about the function allowing the function to be called before it's defined.
 void connectToWiFi();
