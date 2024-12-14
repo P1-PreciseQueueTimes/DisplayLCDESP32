@@ -190,38 +190,45 @@ void setRGB(byte r, byte g, byte b) {
 
 /**
  * @brief Display a message on the LCD.
- * @param message Null-terminated string to display.
+ *  
+ * @details
+ * We take a null-terminated string also known as a C-string as input and display it on the LCD.
+ * It can take both Single and two-line messages. If a message contains the nweline character '\n', then we know it is a two-line message.
+ * This functions splits the text into two different lines, before displaying it (it renders the text before the newline on the first line and the text after the newline on the second line).
+ * Each line has a limit of 16 characters due to the LCD's Line width. If the message does not contain a newline, the entire message is displayed on the first line (up to 16 characters).
+ * 
+ * @param message Null-terminated string (C-String) to display.
  */
 void lcdPrint(const char* message) {
   sendCommand(LCD_ADDRESS, 0x01); // Clear display
   delay(2);
-
+  // Pointers to manage the spllitting of the message into two lines.
+  const char* line1 = message; // Start of the first line                   
+  const char* line2 = strchr(message, '\n'); // Look for a newline statement/charecter.
   
-  const char* line1 = message;                   
-  const char* line2 = strchr(message, '\n');     
-  
-  if (line2) {
-    size_t line1Length = line2 - message;
-    char firstLine[17] = {0};
-    strncpy(firstLine, line1, line1Length > 16 ? 16 : line1Length); 
+  if (line2) { // if a newline charecter is found, it will  split the  message into two lines.
+    size_t line1Length = line2 - message; // This Calculates the length of the first line.
+    char firstLine[17] = {0}; // This Makes a Buffer for the first line. (16 characters + null terminator)
+    strncpy(firstLine, line1, line1Length > 16 ? 16 : line1Length); // Copies all Charecters (first line) up to 16  characters.
     
-    line2++; 
-    char secondLine[17] = {0};
-    strncpy(secondLine, line2, 16); 
+    line2++; // Move pointer past the newline to the start of the second line.
+    char secondLine[17] = {0}; // This Makes a Buffer for  the second line. (16 characters + null terminator)
+    strncpy(secondLine, line2, 16); // Copies all Charecters (second line) up to 16  characters.
 
-    sendCommand(LCD_ADDRESS, 0x80); 
+    // Display First line on LCD
+    sendCommand(LCD_ADDRESS, 0x80); // set  the cursor to the beginning of the first line.
     for (int i = 0; i < strlen(firstLine); i++) {
-      sendData(LCD_ADDRESS, firstLine[i]);
+      sendData(LCD_ADDRESS, firstLine[i]); // Write each charecter to the LCD.
     }
-
-    sendCommand(LCD_ADDRESS, 0xC0); 
+    //  Display Second line on LCD
+    sendCommand(LCD_ADDRESS, 0xC0); // set  the cursor to the beginning of the second line.
     for (int i = 0; i < strlen(secondLine); i++) {
-      sendData(LCD_ADDRESS, secondLine[i]);
+      sendData(LCD_ADDRESS, secondLine[i]); // Write each charecter to the LCD.
     }
   } else {
-    sendCommand(LCD_ADDRESS, 0x80); 
+    sendCommand(LCD_ADDRESS, 0x80); // if no newline charecter is found the entire message is displayed on the first line.
     for (int i = 0; i < strlen(message) && i < 16; i++) {
-      sendData(LCD_ADDRESS, message[i]);
+      sendData(LCD_ADDRESS, message[i]); // Write each charecter to the LCD. (up to 16 characters)
     }
   }
 }
