@@ -193,8 +193,8 @@ void setRGB(byte r, byte g, byte b) {
  *  
  * @details
  * We take a null-terminated string also known as a C-string as input and display it on the LCD.
- * It can take both Single and two-line messages. If a message contains the nweline character '\n', then we know it is a two-line message.
- * This functions splits the text into two different lines, before displaying it (it renders the text before the newline on the first line and the text after the newline on the second line).
+ * It can take both Single and two-line messages. If a message contains the newline character '\n', then we know it is a two-line message.
+ * This functions splits the text into two different lines, before displaying it (it renders the text before the newline statement on the first line and the text after the newline statement on the second line).
  * Each line has a limit of 16 characters due to the LCD's Line width. If the message does not contain a newline, the entire message is displayed on the first line (up to 16 characters).
  * 
  * @param message Null-terminated string (C-String) to display.
@@ -202,7 +202,7 @@ void setRGB(byte r, byte g, byte b) {
 void lcdPrint(const char* message) {
   sendCommand(LCD_ADDRESS, 0x01); // Clear display
   delay(2);
-  // Pointers to manage the spllitting of the message into two lines.
+  // Pointers to manage the splitting of the message into two lines.
   const char* line1 = message; // Start of the first line                   
   const char* line2 = strchr(message, '\n'); // Look for a newline statement/charecter.
   
