@@ -65,11 +65,29 @@ String fetchTextFromServer();
 //Define a bunch of "Pride RGB Values" for the RGB backlight
 const byte prideColors[][3] = {
   {255, 0, 0},    // Red
+  {255, 32, 0},   // In-between Red and Orange
+  {255, 63, 0},
+  {255, 95, 0},
   {255, 127, 0},  // Orange
+  {255, 159, 0},  // In-between Orange and Yellow
+  {255, 191, 0},
+  {255, 223, 0},
   {255, 255, 0},  // Yellow
+  {191, 255, 0},  // In-between Yellow and Green
+  {127, 255, 0},
+  {63, 255, 0},
   {0, 255, 0},    // Green
+  {0, 223, 63},   // In-between Green and Blue
+  {0, 191, 127},
+  {0, 159, 191},
   {0, 0, 255},    // Blue
+  {19, 0, 239},   // In-between Blue and Indigo
+  {37, 0, 223},
+  {56, 0, 207},
   {75, 0, 130},   // Indigo
+  {92, 0, 157},   // In-between Indigo and Violet
+  {111, 0, 184},
+  {130, 0, 207},
   {148, 0, 211}   // Violet
 };
 
@@ -104,7 +122,7 @@ void loop() {
   static unsigned long lastColorChange = 0; // Track last update
   static int currentcolorIndex = 0; // Track current color index of prideColors
 
-  if (millis() - lastColorChange >= 1000) {
+  if (millis() - lastColorChange >= 200) {
     lastColorChange = millis();
   
   //set the RGB backlight to the current pride color
