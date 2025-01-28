@@ -40,10 +40,10 @@
 const char* ssid = "AAU-1-DAY"; // Guest WiFi SSID
 // Guest WiFi passwords in array format
 const char* password[] = {
-    "wound54sound", // Today's password
-    "loss73side", // Tomorrow's password
-    "hope77send", // Day after tomorrow's password
-    "quiet34coal" // 4th day's password
+    "clean41brick", // Today's password
+    "paste31wool", // Tomorrow's password
+    "safe55wool", // Day after tomorrow's password
+    "laugh27jump" // 4th day's password
 }; 
 
 // I2C addresses for LCD and RGB backlight
@@ -51,11 +51,11 @@ const char* password[] = {
 #define RGB_ADDRESS 0x62
 
 // Server URL
-const char* serverUrl = "https://airports-shopping-squad-newton.trycloudflare.com/get/testing/esp32";
+const char* serverUrl = "https://buying-album-hoping-tube.trycloudflare.com/get/testing/esp32";
 
 // Function prototypes/declarations tells compiler about the function allowing the function to be called before it's defined.
 void connectToWiFi();
-void sendCommand(byte address, byte command   );
+void sendCommand(byte address, byte command);
 void sendData(byte address, byte data);
 void lcdInit();
 void setRGB(byte r, byte g, byte b);
@@ -71,7 +71,7 @@ void setup() {
 
   // Initialize the LCD and RGB
   lcdInit();
-  setRGB(255, 255, 128); // Set backlight color to lukewarm yellow
+  setRGB(173,235,179); // Set backlight color to pastel green
 
   // Fetch text from the server and display it on the LCD
   String message = fetchTextFromServer();
