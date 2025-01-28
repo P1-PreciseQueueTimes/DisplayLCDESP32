@@ -62,6 +62,19 @@ void setRGB(byte r, byte g, byte b);
 void lcdPrint(const char* message);
 String fetchTextFromServer();
 
+//Define a bunch of "Pride RGB Values" for the RGB backlight
+const byte prideColors[][3] = {
+  {255, 0, 0},    // Red
+  {255, 127, 0},  // Orange
+  {255, 255, 0},  // Yellow
+  {0, 255, 0},    // Green
+  {0, 0, 255},    // Blue
+  {75, 0, 130},   // Indigo
+  {148, 0, 211}   // Violet
+};
+
+const int numColors = sizeof(prideColors) / sizeof(prideColors[0]);
+
 void setup() {
   Serial.begin(115200); // Initialize serial communication for debugging
   Wire.begin(2, 1);     // SDA = Pin 2, SCL = Pin 1 for ESP32-C3
@@ -71,7 +84,7 @@ void setup() {
 
   // Initialize the LCD and RGB
   lcdInit();
-  setRGB(173,235,179); // Set backlight color to pastel green
+ // RGB(173,235,179); // Set backlight color to min green (somehow it no work...)
 
   // Fetch text from the server and display it on the LCD
   String message = fetchTextFromServer();
@@ -80,9 +93,30 @@ void setup() {
 
 void loop() {
   // Fetch text from the server every 30 seconds
-  delay(30000);
-  String message = fetchTextFromServer();
-  lcdPrint(message.c_str());
+  static unsigned long lastFetchTime = 0; // Tracks the last fetch time
+  if (millis() - lastFetchTime >= 30000) {
+    lastFetchTime = millis();
+    String message = fetchTextFromServer();
+    lcdPrint(message.c_str());
+  }
+
+  // Testing Pride code
+  static unsigned long lastColorChange = 0; // Track last update
+  static int currentcolorIndex = 0; // Track current color index of prideColors
+
+  if (millis() - lastColorChange >= 1000) {
+    lastColorChange = millis();
+  
+  //set the RGB backlight to the current pride color
+  setRGB(prideColors[currentcolorIndex][0],
+          prideColors[currentcolorIndex][1],
+          prideColors[currentcolorIndex][2]);
+  
+  // Increment the pride color index
+  currentcolorIndex = (currentcolorIndex + 1) % numColors;
+
+  }
+
 }
 
 /**
